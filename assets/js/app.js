@@ -4,9 +4,9 @@ var svgWidth = 900;
 var svgHeight = 500;
 var margin = {
     top: 30,
-    right; ,
-    bottom: ,
-    left: ,
+    right: 40,
+    bottom: 40,
+    left: 50,
 };
 
 var width = svgWidth - margin.left - margin.right;
