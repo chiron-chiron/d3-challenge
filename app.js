@@ -9,6 +9,13 @@ var margin = {
     left: 50,
 };
 
+var labelArea = 110;
+var width = parseInt(d3.select("#scatter").style("width"));
+
+// Designate the height of the graph
+var height = width - width / 3.9;
+
+
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
@@ -19,9 +26,9 @@ var svg = d3.select("#scatter")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
 
-// var chartGroup = 
+// var svg = 
 svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
-    // .attr("translate(" + (width -400) + ", " + (height + margin.top + 20) + ")");
+// svg.append("g").attr("translate(" + (width -400) + ", " + (height + margin.top + 20) + ")");
     // .attr("transform", function(d) {return "translate(" + ((width - 400) + "," + (height + margin.top + 20) + ")"})
 
 
@@ -50,35 +57,36 @@ d3.csv("data.csv").then((incomingData) => {
     var leftAxis = d3.axisLeft(yLinearScale);
 
         // Appending axes to chart
-        chartGroup.append("g")
+        svg.append("g")
         .attr("transform", `translate(0, ${height})`)
         .call(bottomAxis);
 
-        chartGroup.append("g")
+        svg.append("g")
         .call(leftAxis);
 
 
     // Creating axes labels
-    chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
-    .attr("dy", "1em")
-    .attr("class", "axisText")
-    .text("Lacks Healthcare %");
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .attr("class", "axisText")
+        .text("Lacks Healthcare %");
 
     // // Import layout from D3 library
     // var pack = d3.layout.pack()
     //     .size([width, height - 50])
 
-    chartGroup.append("text")
-        .attr("transform", 'translate(${width - 400}, ${height + margin.top + 20})')
+    svg.append("text")
+        // .attr("transform", `translate(${width - 400}, ${height + margin.top + 20})`)
+        .attr("transform", "translate(0," + (height - margin.top - labelArea) + ")")
         .attr("class", "axisText")
         .text("In Poverty %");
     
     
     // Creating circles
-    var circlesGroup = chartGroup.selectAll("circle")
+    var circlesGroup = svg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
@@ -88,7 +96,7 @@ d3.csv("data.csv").then((incomingData) => {
         .attr("class", "stateCircle");
     
     // Creating circle labels
-    var circleLabels = chartGroup.selectAll(null)
+    var circleLabels = svg.selectAll(null)
         .data(data)
         .enter()
         .append("text")
@@ -99,7 +107,7 @@ d3.csv("data.csv").then((incomingData) => {
         .attr("class", "stateText");
     
     // Creating Title
-    chartGroup.append("text")
+    svg.append("text")
         .attr("x", (width / 2))
         .attr("y", -6)
         .attr("text-anchor", "middle")
@@ -114,7 +122,7 @@ d3.csv("data.csv").then((incomingData) => {
         .html(function (d) {
             return(`${d.state}<br>Poverty: ${d.poverty}<br>Healthcare: ${d.healthcare}`);
         });
-    chartGroup.call(toolTip);
+    svg.call(toolTip);
 
     // Creating event listeners for Tooltip
     circlesGroup.on("click", function (date) {
