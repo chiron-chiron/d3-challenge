@@ -3,14 +3,15 @@
 var svgWidth = 900;
 var svgHeight = 500;
 var margin = {
-    top: 30,
+    top: 20,
     right: 40,
     bottom: 40,
     left: 50,
 };
 
 var width = svgWidth - margin.left - margin.right;
-var height = svgHeight = margin.top - margin.bottom;
+var height = svgHeight - margin.top - margin.bottom;
+
 
 // Creating SVG wrapper, adding SVG group for chart
 var svg = d3.select("#scatter")
@@ -20,6 +21,9 @@ var svg = d3.select("#scatter")
 
 var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    // .attr("translate(" + (width -400) + ", " + (height + margin.top + 20) + ")");
+    // .attr("transform", function(d) {return "translate(" + ((width - 400) + "," + (height + margin.top + 20) + ")"})
+
 
 // Loading data
 d3.csv("data.csv").then((incomingData) => {
@@ -45,25 +49,36 @@ d3.csv("data.csv").then((incomingData) => {
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
 
+        // Appending axes to chart
+        chartGroup.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(bottomAxis);
+
+        chartGroup.append("g")
+        .call(leftAxis);
+
+
     // Creating axes labels
-    chart.Group.append("text")
+    chartGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Lacks Healthcare (%)");
+    .text("Lacks Healthcare %");
 
-    // Appending axes to chart
-    chartGroup.append("g")
-        .attr("transform", `translate(0, ${height})`)
-        .call(bottomAxis);
+    // // Import layout from D3 library
+    // var pack = d3.layout.pack()
+    //     .size([width, height - 50])
+
+    chartGroup.append("text")
+        .attr("transform", 'translate(${width - 400}, ${height + margin.top + 20})')
+        .attr("class", "axisText")
+        .text("In Poverty %");
     
-    chartGroup.append("g")
-        .call(leftAxis);
     
     // Creating circles
-    var circlesGroup = chart.Group.selectAll("circle")
+    var circlesGroup = chartGroup.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
@@ -83,19 +98,14 @@ d3.csv("data.csv").then((incomingData) => {
         .attr("font-size", "9px")
         .attr("class", "stateText");
     
-    chartGroup.append("text")
-        .attr("transform", `translate(${width - 420}, $(height + margin.top + 20})`)
-        .attr("class", "axisText")
-        .text("In Poverty (%)");
-    
     // Creating Title
     chartGroup.append("text")
         .attr("x", (width / 2))
         .attr("y", -6)
         .attr("text-anchor", "middle")
-        .style("font-size", "20px")
+        .style("font-size", "18px")
         .style("text-decoration", "underline")
-        .text("Lacks Healthcare % vs In Poverty % by State");
+        .text("Lacks Healthcare % vs In Poverty (State) %");
     
     // Creating Tooltip
     var toolTip = d3.tip()
